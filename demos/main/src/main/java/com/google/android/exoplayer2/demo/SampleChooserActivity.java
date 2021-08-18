@@ -91,11 +91,16 @@ public class SampleChooserActivity extends AppCompatActivity
     sampleListView.setAdapter(sampleAdapter);
     sampleListView.setOnChildClickListener(this);
 
+
     Intent intent = getIntent();
     String dataUri = intent.getDataString();
     if (dataUri != null) {
       uris = new String[] {dataUri};
+      // 넘어온 Intent가 있으면 uris[] 에 추가. 
     } else {
+      /*
+        asset에 있는 .exolist.json에 있는 리소스들을 add uriList에 추가
+      */
       ArrayList<String> uriList = new ArrayList<>();
       AssetManager assetManager = getAssets();
       try {
@@ -109,11 +114,11 @@ public class SampleChooserActivity extends AppCompatActivity
             .show();
       }
       uris = new String[uriList.size()];
-      uriList.toArray(uris);
-      Arrays.sort(uris);
+      uriList.toArray(uris); // uriList(ArrayList)를 Array로 전환 
+      Arrays.sort(uris); // 오름차순으로 배열 정렬 
     }
 
-    useExtensionRenderers = DemoUtil.useExtensionRenderers();
+    useExtensionRenderers = DemoUtil.useExtensionRenderers();  // DECODER_EXTENSIONS 사용 여부 확인 
     downloadTracker = DemoUtil.getDownloadTracker(/* context= */ this);
     loadSample();
 
@@ -213,6 +218,12 @@ public class SampleChooserActivity extends AppCompatActivity
     }
   }
 
+
+  /*
+     켄텐츠를 클릭했을 때 호출 
+     - 선택한 컨탠츠의 group position / childPosition을 SharedPreference에 저장한다.
+     - 선택한  
+  */
   @Override
   public boolean onChildClick(
       ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
@@ -223,15 +234,23 @@ public class SampleChooserActivity extends AppCompatActivity
     prefEditor.apply();
 
     PlaylistHolder playlistHolder = (PlaylistHolder) view.getTag();
+
+
     Intent intent = new Intent(this, PlayerActivity.class);
+    Log.e("KEG"," isNonNullAndChecked(preferExtensionDecodersMenuItem) "+  isNonNullAndChecked(preferExtensionDecodersMenuItem));
     intent.putExtra(
         IntentUtil.PREFER_EXTENSION_DECODERS_EXTRA,
         isNonNullAndChecked(preferExtensionDecodersMenuItem));
     IntentUtil.addToIntent(playlistHolder.mediaItems, intent);
+    Log.e("KEG","playlistHolder.mediaItems =  "+ playlistHolder.mediaItems);
     startActivity(intent);
     return true;
   }
 
+
+/*
+    Download 버튼을 클릭 했을 때 호출. 
+*/
   private void onSampleDownloadButtonClicked(PlaylistHolder playlistHolder) {
     int downloadUnsupportedStringId = getDownloadUnsupportedStringId(playlistHolder);
     if (downloadUnsupportedStringId != 0) {
@@ -253,11 +272,11 @@ public class SampleChooserActivity extends AppCompatActivity
     MediaItem.PlaybackProperties playbackProperties =
         checkNotNull(playlistHolder.mediaItems.get(0).playbackProperties);
     if (playbackProperties.adsConfiguration != null) {
-      return R.string.download_ads_unsupported;
+      return R.string.download_ads_unsupported;  // IMA does not support offline ads
     }
     String scheme = playbackProperties.uri.getScheme();
     if (!("http".equals(scheme) || "https".equals(scheme))) {
-      return R.string.download_scheme_unsupported;
+      return R.string.download_scheme_unsupported;   // This demo app only supports downloading http streams
     }
     return 0;
   }
@@ -549,10 +568,15 @@ public class SampleChooserActivity extends AppCompatActivity
       onSampleDownloadButtonClicked((PlaylistHolder) view.getTag());
     }
 
+
+    /*
+      Category를 선택하면 나오는 컨텐츠들 초기화 
+    */
     private void initializeChildView(View view, PlaylistHolder playlistHolder) {
       view.setTag(playlistHolder);
       TextView sampleTitle = view.findViewById(R.id.sample_title);
       sampleTitle.setText(playlistHolder.title);
+      Log.e("KEG","title = "+ playlistHolder.title);
 
       boolean canDownload = getDownloadUnsupportedStringId(playlistHolder) == 0;
       boolean isDownloaded =
@@ -566,6 +590,10 @@ public class SampleChooserActivity extends AppCompatActivity
     }
   }
 
+
+  /*
+    PlayList의 카테고리 
+  */ 
   private static final class PlaylistHolder {
 
     public final String title;
