@@ -98,6 +98,13 @@ public final class DemoUtil {
         .setExtensionRendererMode(extensionRendererMode);
   }
 
+
+/*
+  Cronet : Android 앱에서 라이브러리로 사용되도록 제공하는 Chromium 네트워크 스택.
+  Cronet은 지연 시간을 줄이고 앱이 작동해야 하는 네트워크 요청의 처리량을 늘리는 여러 기술을 활용 
+  
+  Cronet을 사용 할 때 CronetDataSource.Factory 
+*/
   public static synchronized HttpDataSource.Factory getHttpDataSourceFactory(Context context) {
     if (httpDataSourceFactory == null) {
       if (USE_CRONET_FOR_NETWORKING) {

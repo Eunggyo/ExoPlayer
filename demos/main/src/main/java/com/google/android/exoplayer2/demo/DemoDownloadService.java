@@ -51,8 +51,7 @@ public class DemoDownloadService extends DownloadService {
     // This will only happen once, because getDownloadManager is guaranteed to be called only once
     // in the life cycle of the process.
     DownloadManager downloadManager = DemoUtil.getDownloadManager(/* context= */ this);
-    DownloadNotificationHelper downloadNotificationHelper =
-        DemoUtil.getDownloadNotificationHelper(/* context= */ this);
+    DownloadNotificationHelper downloadNotificationHelper = DemoUtil.getDownloadNotificationHelper(/* context= */ this);
     downloadManager.addListener(
         new TerminalStateNotificationHelper(
             this, downloadNotificationHelper, FOREGROUND_NOTIFICATION_ID + 1));
@@ -61,6 +60,7 @@ public class DemoDownloadService extends DownloadService {
 
   @Override
   protected PlatformScheduler getScheduler() {
+    //Util.SDK_INT가 21과 크거나 같으면 , new PlatformScheduler를 리턴 , 아니면 null을 리턴한다 .
     return Util.SDK_INT >= 21 ? new PlatformScheduler(this, JOB_ID) : null;
   }
 
@@ -89,7 +89,7 @@ public class DemoDownloadService extends DownloadService {
 
     private int nextNotificationId;
 
-    public TerminalStateNotificationHelper(
+    public TerminalStateNotificationHelper( 
         Context context, DownloadNotificationHelper notificationHelper, int firstNotificationId) {
       this.context = context.getApplicationContext();
       this.notificationHelper = notificationHelper;
@@ -97,9 +97,9 @@ public class DemoDownloadService extends DownloadService {
     }
 
     @Override
-    public void onDownloadChanged(
-        DownloadManager downloadManager, Download download, @Nullable Exception finalException) {
+    public void onDownloadChanged(DownloadManager downloadManager, Download download, @Nullable Exception finalException) {
       Notification notification;
+      // download.state가 Download.STATE_COMPLETED 이면 noti 변경 
       if (download.state == Download.STATE_COMPLETED) {
         notification =
             notificationHelper.buildDownloadCompletedNotification(
@@ -108,6 +108,7 @@ public class DemoDownloadService extends DownloadService {
                 /* contentIntent= */ null,
                 Util.fromUtf8Bytes(download.request.data));
       } else if (download.state == Download.STATE_FAILED) {
+        // download.state가 failed 이면 noti 변경  
         notification =
             notificationHelper.buildDownloadFailedNotification(
                 context,
