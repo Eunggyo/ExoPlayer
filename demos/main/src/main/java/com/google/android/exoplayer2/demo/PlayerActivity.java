@@ -126,6 +126,10 @@ public class PlayerActivity extends AppCompatActivity
     }
   }
 
+
+  /*
+    현재 PlayerActivity인 상태에서 또 intent 호출을 당하면 onNewIntent를 탄다. 
+  */  
   @Override
   public void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
@@ -185,6 +189,9 @@ public class PlayerActivity extends AppCompatActivity
     releaseAdsLoader();
   }
 
+  /*
+    storage_permission 요청 
+  */
   @Override
   public void onRequestPermissionsResult(
       int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -223,12 +230,13 @@ public class PlayerActivity extends AppCompatActivity
 
   // OnClickListener methods
 
+  /*
+    track 버튼을 누르면 TrackSelectionDialog 보임. 
+  */
   @Override
   public void onClick(View view) {
-    if (view == selectTracksButton
-        && !isShowingTrackSelectionDialog
-        && TrackSelectionDialog.willHaveContent(trackSelector)) {
-      isShowingTrackSelectionDialog = true;
+    if (view == selectTracksButton && !isShowingTrackSelectionDialog && TrackSelectionDialog.willHaveContent(trackSelector)) {
+      isShowingTrackSelectionDialog = true; 
       TrackSelectionDialog trackSelectionDialog =
           TrackSelectionDialog.createForTrackSelector(
               trackSelector,
@@ -239,6 +247,10 @@ public class PlayerActivity extends AppCompatActivity
 
   // PlayerControlView.VisibilityListener implementation
 
+
+  /*
+    플레이어 재생 중 화면을 터치하면 , Select Track 버튼인 나온다. 
+  */
   @Override
   public void onVisibilityChange(int visibility) {
     debugRootView.setVisibility(visibility);

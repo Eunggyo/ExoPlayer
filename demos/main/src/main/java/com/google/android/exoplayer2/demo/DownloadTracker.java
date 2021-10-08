@@ -96,12 +96,19 @@ public class DownloadTracker {
   public void removeListener(Listener listener) {
     listeners.remove(listener);
   }
+ 
+ /*
+  Download download가 null이 아니고 download.state가 STATE FAILED가 아니면 true 
 
+ */
   public boolean isDownloaded(MediaItem mediaItem) {
     @Nullable Download download = downloads.get(checkNotNull(mediaItem.playbackProperties).uri);
     return download != null && download.state != Download.STATE_FAILED;
   }
 
+/*
+  Download
+  */
   @Nullable
   public DownloadRequest getDownloadRequest(Uri uri) {
     @Nullable Download download = downloads.get(uri);
